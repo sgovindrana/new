@@ -1,0 +1,118 @@
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+    
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>  
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Patient Details</title>
+</head>
+<body>
+ 
+ <form:form action="/patientDetails" method="post" modelAttribute="patientDetails">
+ <div align="center">${msg}</div>
+ <br />
+<div align="center">
+         Patient Id      : <form:input path="patientID" />  
+         <br />
+         Patient Name    :  <form:input path="name" /> 
+         <br/>
+         Patient Address : <form:input path="address" /> 
+         <br/><br/>
+         <input type = "submit" value = "Submit" />
+         </div>
+      </form:form>
+      
+</body>
+</html>
+
+
+CONTROLLER
+
+
+package com.rohan.PatientDB.patientController;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.rohan.PatientDB.patientBeans.PatientDetails;
+import com.rohan.PatientDB.patientService.PatientService;
+
+@Controller
+public class DummyController {
+	
+	@Autowired
+	PatientService patientService;
+	
+	@GetMapping("/patientDetails")
+	public ModelAndView getPatientDetails() {
+		
+		//model.addAttribute("views","")
+		ModelAndView mv = new ModelAndView("PatientDetails");
+		PatientDetails pd = new PatientDetails();
+		mv.addObject("patientDetails",pd);
+		mv.addObject("msg", "Hi its working!!");
+		return mv;
+	}
+	
+	@PostMapping("/patientDetails")
+	public ModelAndView putPatientDetails(@ModelAttribute("PatientDetails") PatientDetails pd) {
+		
+		//model.addAttribute("views","")
+		ModelAndView mv = new ModelAndView("PatientDetails");
+		//PatientDetails pd = new PatientDetails();
+		String msg = patientService.setPatientDetails2(pd);
+		mv.addObject("patientDetails",pd);
+		mv.addObject("msg", msg);
+		return mv;
+	}
+
+}
+
+
+
+
+
+
+
+plugins {
+	id 'org.springframework.boot' version '2.2.4.RELEASE'
+	id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+	id 'java'
+}
+
+group = 'com.rohan.PatientDB'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	runtimeOnly 'com.h2database:h2' 
+	implementation 'org.springframework.boot:spring-boot-starter-web-services'
+	compile group: 'org.apache.tomcat', name: 'tomcat-jasper', version: '9.0.22'
+	testImplementation('org.springframework.boot:spring-boot-starter-test') {
+		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+	}// https://mvnrepository.com/artifact/org.apache.tomcat/tomcat-jasper
+}
+
+test {
+	useJUnitPlatform()
+}
+
+
+
+
+
+
+
+
